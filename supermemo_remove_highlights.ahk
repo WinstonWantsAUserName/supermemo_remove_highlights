@@ -7,12 +7,12 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #if (WinActive("ahk_class TElWind") && InStr(ControlGetFocus("A"), "Internet Explorer_Server"))
 ^!+h::
   ClipSaved := ClipboardAll
-  if (!copy(false, true)) {
+  if (!t := copy(false, true)) {
     ToolTip("No text found.")
     Clipboard := ClipSaved
     return
   }
-  clip(StrReplace(Clipboard, " class=Highlight"),, false, "sm")
+  clip(StrReplace(t, " class=Highlight"),, false, "sm")
   Clipboard := ClipSaved
 return
 
@@ -35,6 +35,10 @@ ToolTip(text, perma:=false, period:=-2000, command:="", n:=20) {
   if (!perma)
     SetTimer, % RemoveTTFunc, % period
   CoordMode, ToolTip, % PrevCoordModeTT
+}
+
+RemoveToolTip(n:=20) {
+  Tooltip,,,, % n
 }
 
 ; Clip() - Send and Retrieve Text Using the Clipboard
@@ -71,12 +75,8 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, Method:=0, KeysT
       sleep 1
     ; Sleep 20  ; Short sleep in case Clip() is followed by more keystrokes such as {Enter}
   }
-  If (Text && (Reselect || (HTML = "sm"))) {
-    StrLen := StrLen(ParseLineBreaks(text))
-    if ((HTML = "sm") && InStr(text, "<p"))
-      StrLen++
-    send % "+{Left " . StrLen . "}"
-  }
+  If (Text && (Reselect || (HTML = "sm")))
+    send % "+{Left " . StrLen(ParseLineBreaks(text)) . "}"
   if (text && (html = "sm"))
     send ^+1
   if (RestoreClip)  ; for scripts that restore clipboard at the end
