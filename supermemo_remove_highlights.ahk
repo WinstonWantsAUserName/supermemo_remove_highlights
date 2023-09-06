@@ -77,7 +77,7 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, Method:=0, KeysT
   }
   If (Text && (Reselect || (HTML = "sm"))) {
     StrLen := StrLen(Vim.ParseLineBreaks(text))
-    if ((HTML = "sm") && IfContains(text, "<p"))
+    if ((HTML = "sm") && InStr(text, "<p"))
       StrLen++
     send % "+{Left " . StrLen . "}"
   }
