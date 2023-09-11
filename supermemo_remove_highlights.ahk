@@ -26,6 +26,9 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
     send % "+{left " . StrLen(t) . "}^+1"
     Clipboard := ClipSaved
   } else if (!IsSMEditingText() && ControlGet(,, "Internet Explorer_Server1", "A")) {
+    MsgBox, 3,, Do you want to remove all highlights?
+    if (IfMsgBox("No") || IfMsgBox("Cancel"))
+      return
     send ^{f7}  ; save read point
     if (!IsSMEditingText()) {
       send ^t
@@ -71,6 +74,11 @@ IfContains(ByRef var, MatchList, StrCaseSense:=false) {
     ret := true
   StringCaseSense % PrevStringCaseSense
   return ret
+}
+
+IfMsgBox(ByRef ButtonName) {
+  IfMsgBox, % ButtonName
+    return true
 }
 
 WaitSMTextFocus(Timeout:=0) {
