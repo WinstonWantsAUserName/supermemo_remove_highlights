@@ -11,17 +11,7 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
   KeyWait Shift
   if (IsSMEditingHTML()) {
     ClipSaved := ClipboardAll
-    LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-    send ^c
-    ClipWait, LongCopy ? 0.6 : 0.2, True
-    if (ErrorLevel) {
-      ToolTip("No text found.")
-      return
-    } else {
-      ClipboardGet_HTML(t)
-      RegExMatch(t, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", t)
-    }
-    Clip(StrReplace(t, " class=Highlight"),, false, "sm")
+    Clip(StrReplace(Copy(false, true), " class=Highlight"),, false, "sm")
     Clipboard := ClipSaved
   } else if (!IsSMEditingText() && ControlGet(,, "Internet Explorer_Server1", "A")) {
     MsgBox, 3,, Do you want to remove all highlights?
@@ -290,7 +280,6 @@ Copy(RestoreClip:=true, HTML:=false, CopyMethod:=0, KeysToSend:="") {
 }
 
 PasteHTML() {
-  this.ActivateElWind()
   send {AppsKey}xp  ; Paste HTML
   while (DllCall("GetOpenClipboardWindow"))
     sleep 1
